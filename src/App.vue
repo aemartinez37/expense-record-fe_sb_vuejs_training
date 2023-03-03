@@ -1,3 +1,4 @@
 <template>
-  <h1>Hello World!</h1>
+  <v-toolbar title="Expenses Record" color="success"></v-toolbar>
+  <RouterView />
 </template>

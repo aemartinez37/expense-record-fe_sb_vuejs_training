@@ -5,7 +5,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/expenses',
+      path: '/',
       name: 'expenses',
       component: ExpensesView
     }
