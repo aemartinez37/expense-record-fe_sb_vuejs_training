@@ -1,25 +1,36 @@
 <script lang="ts">
+import Datepicker from 'vue3-datepicker'
 export default {
   props: {
-    addExpense: { type: Function },
-    quit: { type: Function }
+    addExpense: { type: Function, required: true },
+    quit: { type: Function, required: true }
   },
   data() {
     return {
+      datePicked: new Date(),
       description: '',
       amount: 0
+    }
+  },
+  components: {
+    Datepicker
+  },
+  methods: {
+    toUppercase() {
+      this.description = this.description.toUpperCase()
     }
   }
 }
 </script>
 
 <template>
-  <div class="expenseForm">
-    <v-text-field v-model="description" label="Description" />
-    <v-text-field label="Amount" v-model="amount" prefix="$"></v-text-field>
-    <v-btn @click="quit!()" color="error"> Cancel </v-btn>
+  <div class="expense-form">
+    <div class="expense-form--date">Date: <Datepicker v-model="datePicked" /></div>
+    <v-text-field v-model="description" @keyup="toUppercase" type="text" label="Description" />
+    <v-text-field v-model="amount" type="number" label="Amount" prefix="$"></v-text-field>
+    <v-btn @click="quit()" color="error"> Cancel </v-btn>
     <v-btn
-      @click="addExpense!(description, amount)"
+      @click="addExpense(datePicked, description, amount)"
       :disabled="!description || amount <= 0"
       color="success"
     >
@@ -29,10 +40,16 @@ export default {
 </template>
 
 <style scoped>
-div .expenseForm {
+div .expense-form {
   width: 500px;
-  margin: 7px;
+  margin: 25px 15px;
   text-align: center;
+}
+
+div .expense-form--date {
+  display: flex;
+  gap: 10px;
+  margin: 5px 5px 15px;
 }
 
 button {

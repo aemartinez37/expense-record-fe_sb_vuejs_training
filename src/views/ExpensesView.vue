@@ -1,8 +1,9 @@
 <script lang="ts">
 import ExpenseForm from '../components/ExpenseForm.vue'
+import ModalOverlay from '../components/ModalOverlay.vue'
 
 interface IExpense {
-  date: Date
+  date: string
   desc: string
   amount: number
 }
@@ -15,8 +16,8 @@ export default {
     }
   },
   methods: {
-    newExpense(desc: string, amount: number) {
-      this.expenses.push({ date: new Date(), desc, amount })
+    newExpense(datePicked: Date, desc: string, amount: number) {
+      this.expenses.push({ date: datePicked.toLocaleDateString('en-US'), desc, amount })
       this.showExpenseForm = false
     },
     closeExpenseForm() {
@@ -24,7 +25,8 @@ export default {
     }
   },
   components: {
-    ExpenseForm
+    ExpenseForm,
+    ModalOverlay
   }
 }
 </script>
@@ -46,7 +48,7 @@ export default {
       </thead>
       <tbody>
         <tr v-for="(item, index) in expenses" :key="index">
-          <td>{{ item.date.toLocaleDateString('en-US') }}</td>
+          <td>{{ item.date }}</td>
           <td>{{ item.desc.toUpperCase() }}</td>
           <td>${{ item.amount }}</td>
         </tr>
@@ -54,11 +56,11 @@ export default {
     </v-table>
   </div>
 
-  <v-overlay v-model="showExpenseForm">
-    <v-card class="pa-2">
+  <ModalOverlay v-model="showExpenseForm" title="New Expense">
+    <template v-slot:modal-content>
       <ExpenseForm :add-expense="newExpense" :quit="closeExpenseForm" />
-    </v-card>
-  </v-overlay>
+    </template>
+  </ModalOverlay>
 
   <v-btn
     @click="showExpenseForm = true"
