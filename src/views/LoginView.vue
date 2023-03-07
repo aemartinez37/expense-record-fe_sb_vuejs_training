@@ -1,5 +1,6 @@
 <script lang="ts">
 import LoginForm from '../components/LoginForm.vue'
+import UserForm from '../components/UserForm.vue'
 import ModalOverlay from '../components/ModalOverlay.vue'
 
 export default {
@@ -18,6 +19,7 @@ export default {
   },
   components: {
     LoginForm,
+    UserForm,
     ModalOverlay
   }
 }
@@ -28,7 +30,7 @@ export default {
   <LoginForm :open-create-user-form="openCreateUserForm"></LoginForm>
   <ModalOverlay v-model="showCreateUserForm" title="New User">
     <template v-slot:modal-content>
-      <h1>Hello World!: Create user form</h1>
+      <UserForm :close-create-user-form="closeCreateUserForm" />
     </template>
   </ModalOverlay>
 </template>

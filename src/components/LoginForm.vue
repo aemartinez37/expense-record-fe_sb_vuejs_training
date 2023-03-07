@@ -1,6 +1,5 @@
 <script lang="ts">
 import ApiService from '@/services/ApiService'
-import type { IUser } from '@/types'
 
 export default {
   props: {
@@ -12,8 +11,9 @@ export default {
   methods: {
     async submitLogin() {
       await ApiService.getUser(this.userName)
-        .then((response: IUser) => {
+        .then((response) => {
           console.log(response)
+          this.$router.push({ path: 'home' })
         })
         .catch((e: Error) => {
           console.log(e)
