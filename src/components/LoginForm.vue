@@ -1,0 +1,36 @@
+<script lang="ts">
+import ApiService from '@/services/ApiService'
+import type { IUser } from '@/types'
+
+export default {
+  props: {
+    openCreateUserForm: { type: Function, required: true }
+  },
+  data: () => ({
+    userName: ''
+  }),
+  methods: {
+    async submitLogin() {
+      await ApiService.getUser(this.userName)
+        .then((response: IUser) => {
+          console.log(response)
+        })
+        .catch((e: Error) => {
+          console.log(e)
+          this.openCreateUserForm()
+        })
+    }
+  }
+}
+</script>
+
+<template>
+  <v-sheet width="300" class="mx-auto">
+    <h1>Welcome!</h1>
+    <br />
+    <v-form validate-on="submit" @submit.prevent="submitLogin">
+      <v-text-field v-model="userName" label="Username"></v-text-field>
+      <v-btn type="submit" block class="mt-2" :disabled="!userName" color="success">Login</v-btn>
+    </v-form>
+  </v-sheet>
+</template>
