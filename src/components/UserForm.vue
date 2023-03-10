@@ -1,64 +1,61 @@
-<script lang="ts">
-import { reactive } from 'vue'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { email, required } from '@vuelidate/validators'
+import { required, minLength, email } from '@vuelidate/validators'
 import ApiService from '@/services/ApiService'
 import type { IUser } from '@/types'
 
-export default {
-  props: {
-    closeCreateUserForm: { type: Function, required: true }
+const props = defineProps<{
+  closeCreateUserForm: Function
+}>()
+
+const userFormInitialState = {
+  userName: '',
+  fullName: '',
+  email: ''
+}
+
+const userFormState = ref({
+  ...userFormInitialState
+})
+
+const rules = computed(() => ({
+  userName: {
+    required,
+    minLength: minLength(5)
   },
-  setup() {
-    const initialState = {
-      userName: '',
-      fullName: '',
-      email: ''
-    }
+  fullName: { required },
+  email: { required, email }
+}))
 
-    const state = reactive({
-      ...initialState
-    })
+const v$ = useVuelidate(rules, userFormState)
 
-    const rules = {
-      userName: { required },
-      fullName: { required },
-      email: { required, email }
-    }
-
-    const v$ = useVuelidate(rules, state)
-
-    return { state, v$ }
-  },
-  methods: {
-    async submitNewuser() {
-      const newUser: IUser = {
-        username: this.state.userName,
-        full_name: this.state.fullName,
-        email: this.state.email
-      }
-
-      await ApiService.createUser(newUser)
-        .then((response) => {
-          console.log(response)
-          alert('User created!')
-          this.closeCreateUserForm()
-        })
-        .catch((e: Error) => {
-          alert(e)
-        })
-    }
+async function submitNewuser() {
+  const newUser: IUser = {
+    username: userFormState.value.userName,
+    full_name: userFormState.value.fullName,
+    email: userFormState.value.email
   }
+
+  await ApiService.createUser(newUser)
+    .then((response) => {
+      console.log(response)
+      alert('User created!')
+      props.closeCreateUserForm()
+    })
+    .catch((e: Error) => {
+      alert(e)
+    })
 }
 </script>
 
 <template>
-  <v-sheet width="300" class="mx-auto">
+  <v-sheet width="500" class="mx-auto">
     <v-form validate-on="submit" @submit.prevent="submitNewuser">
       <v-text-field
-        v-model="state.userName"
+        v-model="userFormState.userName"
         :error-messages="v$.userName.$errors.map((e) => e.$message.toString())"
-        :counter="10"
+        :counter="5"
         label="Username"
         required
         @input="v$.userName.$touch"
@@ -66,7 +63,7 @@ export default {
       ></v-text-field>
 
       <v-text-field
-        v-model="state.fullName"
+        v-model="userFormState.fullName"
         :error-messages="v$.fullName.$errors.map((e) => e.$message.toString())"
         label="Full Name"
         required
@@ -75,7 +72,7 @@ export default {
       ></v-text-field>
 
       <v-text-field
-        v-model="state.email"
+        v-model="userFormState.email"
         :error-messages="v$.email.$errors.map((e) => e.$message.toString())"
         label="E-mail"
         required
